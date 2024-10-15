@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Banks</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        
+        /* Gradient styles for the navbar */
+        .navbar {
+            background: linear-gradient(120deg, #ff416c 0%, #ff4b2b 100%);
+        }
+    
+        .navbar .nav-link, .navbar .navbar-brand {
+            color: white !important; /* Set navbar text to white */
+        }
+        
+        .navbar .nav-link:hover {
+            color: #f1f1f1 !important; /* Lighter color on hover */
+        }
+    
+        /* Gradient background for the entire page */
+        body {
+            background: linear-gradient(120deg, #ffe6e6 0%, #ffcccb 100%); /* Light red to pink gradient */
+            height: 100vh; /* Full viewport height */
+        }
+        /* Specific hover effect for the History button */
+.navbar .nav-item .nav-link.history:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Slight white background on hover */
+    border-radius: 5px; /* Slightly round the corners */
+}
+
+    
+        /* Container styles */
+        .container {
+            max-width: 800px; /* Limit container width */
+            margin-top: 2rem;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 20px; /* Padding around content */
+        }
+    
+        /* Card styles */
+        .card {
+            transition: transform 0.3s; /* Smooth hover transition */
+            border: none; /* Remove default border */
+            position: relative; /* Required for pseudo-elements */
+        }
+    
+        .card:hover {
+            transform: scale(1.02); /* Slightly enlarge on hover */
+        }
+    
+        /* Gradient effect on hover for the card */
+        .card:hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, rgba(255, 65, 108, 0.7), rgba(255, 75, 43, 0.7)); /* Semi-transparent gradient */
+            border-radius: 10px; /* Match the card border radius */
+            z-index: 0; /* Send behind the card content */
+        }
+    
+        /* Card body styles */
+        .card-body {
+            position: relative; /* Required for content positioning */
+            z-index: 1; /* Bring the card content above the gradient */
+        }
+    
+        /* Footer styles */
+        footer {
+            background-color: rgba(255, 0, 0, 0.9); /* Semi-transparent red for footer */
+            padding: 20px;
+            color: white;
+        }
+    
+        /* Modal styles */
+        .modal-content {
+            border-radius: 10px; /* Rounded corners */
+        }
+        
+        /* Button styles */
+        .btn {
+            transition: background 0.3s ease; /* Smooth background transition */
+        }
+    
+        .btn:hover {
+            background: linear-gradient(120deg, #ff416c, #ff4b2b); /* Button gradient on hover */
+            color: white; /* Text color on hover */
+        }
+    </style>
+    
+</head>
+<body>
+
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Blood Bank Locator</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link history" href="/reservations/history">History</a>
+                </li>
+                
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Available Blood Banks</h2>
+    <div id="bloodBanksList" class="mt-3"></div>
+</div>
+
+<!-- Modal for reservation -->
+<div class="modal fade" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reservationModalLabel">Make a Reservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reservationForm">
+                    <input type="hidden" id="bloodBankId" name="blood_bank_id">
+                    <input type="hidden" id="bloodType" name="blood_type">
+                    <input type="hidden" id="userId" name="user_id">
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity Required</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eta" class="form-label">ETA (dd-MM-yyyy hh:mm)</label>
+                        <input type="text" class="form-control" id="eta" name="eta" placeholder="dd-MM-yyyy hh:mm" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="reserveBtn">Reserve</button>
+                <button type="button" class="btn btn-success" id="reservePayBtn">Reserve and Pay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for reservation completion -->
+<div class="modal fade" id="reservationCompleteModal" tabindex="-1" aria-labelledby="reservationCompleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reservationCompleteModalLabel">Reservation Complete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for reserving! Your contribution will help save lives. If you want to visit the blood bank, please click the button below.</p>
+                <button class="btn btn-primary" id="navigateToBloodBank">Take me to the Blood Bank</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let currentAction = '';  // Track which button was pressed
+
+    // Function to display available blood banks
+    function displayBloodBanks(bloodBanks) {
+        const bloodBanksList = document.getElementById('bloodBanksList');
+        bloodBanksList.innerHTML = ""; // Clear previous entries
+
+        if (bloodBanks.length === 0) {
+            bloodBanksList.innerHTML = "<p>No blood banks available for the selected blood type.</p>";
+            return;
+        }
+
+        bloodBanks.forEach(bank => {
+            const bankDiv = document.createElement('div');
+            bankDiv.className = "card mb-3";
+            bankDiv.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${bank.Name}</h5>
+                    <p class="card-text">Blood Type: ${localStorage.getItem('blood_type')}</p>
+                    <button class="btn btn-primary reserve-btn" data-id="${bank.id}" data-lat="${bank.Latitude}" data-long="${bank.Longitude}">Reserve</button>
+                    <button class="btn btn-success reserve-pay-btn" data-id="${bank.id}" data-lat="${bank.Latitude}" data-long="${bank.Longitude}">Reserve and Pay</button>
+                </div>
+            `;
+            bloodBanksList.appendChild(bankDiv);
+        });
+
+        // Add event listeners to the reserve buttons
+        document.querySelectorAll('.reserve-btn').forEach(button => {
+            button.addEventListener('click', () => openReservationModal(button.getAttribute('data-id'), button.getAttribute('data-lat'), button.getAttribute('data-long'), 'reserve'));
+        });
+
+        document.querySelectorAll('.reserve-pay-btn').forEach(button => {
+            button.addEventListener('click', () => openReservationModal(button.getAttribute('data-id'), button.getAttribute('data-lat'), button.getAttribute('data-long'), 'reserve_pay'));
+        });
+    }
+
+    // Open reservation modal and set up data
+    function openReservationModal(bloodBankId, latitude, longitude, action) {
+        currentAction = action;  // Track the action ('reserve' or 'reserve_pay')
+        document.getElementById('bloodBankId').value = bloodBankId;
+        document.getElementById('bloodType').value = localStorage.getItem('blood_type');
+        document.getElementById('userId').value = localStorage.getItem('user_id');
+        document.getElementById('latitude').value = latitude;  // Store latitude
+        document.getElementById('longitude').value = longitude;  // Store longitude
+        const modal = new bootstrap.Modal(document.getElementById('reservationModal'));
+        modal.show();
+    }
+
+    // Submit the reservation data
+    document.getElementById('reserveBtn').addEventListener('click', () => submitReservation('reserve'));
+    document.getElementById('reservePayBtn').addEventListener('click', () => submitReservation('completed'));
+
+    function submitReservation(status) {
+        const bloodBankId = document.getElementById('bloodBankId').value;
+        const bloodType = document.getElementById('bloodType').value;
+        const userId = document.getElementById('userId').value;
+        const quantity = document.getElementById('quantity').value;
+        const eta = document.getElementById('eta').value;
+
+        const payload = {
+            user_id: userId,
+            blood_bank_id: bloodBankId,
+            blood_type: bloodType,
+            Quantity_Reserved: quantity,
+            ReservationsExpiryTime: eta,
+            status: status
+        };
+
+        fetch('/reservations/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if the reservation was successful
+            if (data.message) {
+                // Show the completion modal with Google Maps button
+                const completeModal = new bootstrap.Modal(document.getElementById('reservationCompleteModal'));
+                completeModal.show();
+
+                // Update the Google Maps button with the correct coordinates
+                const latitude = document.getElementById('latitude').value;
+                const longitude = document.getElementById('longitude').value;
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+                document.getElementById('navigateToBloodBank').onclick = () => {
+                    window.open(mapsUrl, '_blank');  // Open Google Maps in a new tab
+                };
+
+                // Optional: Reset the form after reservation completion
+                document.getElementById('reservationForm').reset();
+                // Optionally hide the reservation modal
+                const reservationModal = bootstrap.Modal.getInstance(document.getElementById('reservationModal'));
+                reservationModal.hide();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while creating the reservation. Please try again.');
+        });
+    }
+
+    // Load blood banks when the page loads
+    window.onload = function() {
+        const payload = {
+            blood_type: localStorage.getItem('blood_type'),
+            user_location: localStorage.getItem('user_location')
+        };
+
+        fetch('/blood/find_blood_banks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => displayBloodBanks(data))
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching blood banks. Please try again.');
+        });
+    };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Gradient styles for the body */
+        body {
+            background: linear-gradient(120deg, #ffe6e6 0%, #ffcccb 100%); /* Light red to pink gradient */
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            padding: 20px; /* Padding for container */
+            box-sizing: border-box; /* Include padding in height/width calculations */
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 800px; /* Limit container width */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 20px; /* Padding around content */
+        }
+
+        /* Button styles */
+        .btn {
+            transition: background 0.3s ease; /* Smooth background transition */
+        }
+
+        .btn-primary {
+            background: linear-gradient(120deg, #ff416c, #ff4b2b); /* Primary button gradient */
+            border: none; /* Remove border */
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(120deg, #ff4b2b, #ff416c); /* Hover gradient effect */
+            color: white; /* Text color on hover */
+        }
+
+        /* Table styles */
+        table {
+            background-color: white; /* Table background */
+            border-radius: 10px; /* Rounded corners for table */
+            overflow: hidden; /* Prevent border-radius from being cut off */
+        }
+
+        th {
+            background: linear-gradient(120deg, #ff416c, #ff4b2b); /* Header gradient */
+            color: white; /* Header text color */
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 65, 108, 0.1); /* Light pink on row hover */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Reservation History</h2>
+
+    <!-- Back to Home Button -->
+    <a href="{{ url_for('auth.details') }}" class="btn btn-primary mb-3">Back to Home</a>
+
+    <!-- Message when there are no reservations -->
+    {% if message %}
+        <div class="alert alert-info" role="alert">
+            {{ message }}
+        </div>
+    {% else %}
+        <!-- Table to display reservation history -->
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Blood Bank ID</th>
+                    <th>Blood Type</th>
+                    <th>Quantity Reserved</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through reservations and display them in the table -->
+                {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.Blood_Bank_ID }}</td>
+                        <td>{{ reservation.Blood_Type }}</td>
+                        <td>{{ reservation.Quantity_Reserved }}</td>
+                        <td>{{ reservation.Reservations_start_time }}</td>
+                        <td>{{ reservation.StatusReservedCompletedCancelled }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<!-- Bootstrap JS for any potential functionality -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

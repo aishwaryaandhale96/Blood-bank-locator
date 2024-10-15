@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Styling for the image in the top-right corner */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: -1; /* Make sure the image is behind the navbar and form */
+            width: 400px;
+            height: 400px;
+            object-fit: cover; /* Ensure the image scales properly */
+        }
+
+        .container {
+            position: relative;
+            z-index: 1; /* Ensure content stays above the background image */
+        }
+
+        /* Modern navbar design */
+        .navbar {
+            background: linear-gradient(90deg, rgba(255, 0, 77, 0.8), rgba(255, 95, 109, 0.8)); /* Gradient background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif; /* Modern font */
+            font-weight: bold;
+            color: #fff !important; /* Make brand white */
+        }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.6); /* Light border for toggler */
+        }
+
+        .navbar-toggler-icon {
+            background-image: url('data:image/svg+xml;charset=UTF8,%3Csvg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath stroke="rgba%28255, 255, 255, 0.7%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+        }
+
+        .nav-link {
+            color: #fff !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem; /* Modern padding */
+            border-radius: 20px; /* Rounded corners */
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+        }
+
+        /* Modern blood type buttons */
+        #bloodTypeButtons .btn {
+            margin: 5px; /* Adds spacing between buttons */
+            padding: 10px 20px;
+            border-radius: 30px; /* Rounded corners for a modern look */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+            transition: background-color 0.3s, box-shadow 0.3s; /* Smooth hover transition */
+        }
+
+        #bloodTypeButtons .btn:hover {
+            background-color: #0d6efd;
+            color: #fff;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+        }
+
+        #bloodTypeButtons .btn.active {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+        }
+
+        #bloodTypeButtons .btn-outline-primary.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        /* Highlight for error state */
+        .error {
+            border: 2px solid red !important;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+        }
+
+        /* Adjust location input size */
+        #location {
+            width: 400px; /* Adjusted to smaller width for modern look */
+        }
+
+        /* Modernize button appearance */
+        .btn-primary {
+            background-color: #ff0066; /* Hot pink primary button */
+            border-color: #ff0066;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6005c; /* Slightly darker pink on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Elevation effect on hover */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">My App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/reservations/history">History</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Image positioned in the top-right corner behind the navbar -->
+<img src="../static/hand with heart.png" alt="Background Image" class="bg-image">
+
+<!-- Form Content -->
+<div class="container mt-5">
+    <h2>Hello, {{ user_name }}!</h2>
+    <h3>Enter Your Details</h3>
+    <form id="detailsForm">
+        <div class="mb-3">
+            <label class="form-label">Blood Type</label>
+            <div id="bloodTypeButtons" class="btn-group mb-2" role="group">
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('A+')">A+</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('A-')">A-</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('B+')">B+</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('B-')">B-</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('AB+')">AB+</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('AB-')">AB-</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('O+')">O+</button>
+                <button type="button" class="btn btn-outline-primary" onclick="selectBloodType('O-')">O-</button>
+            </div>
+            <input type="hidden" id="blood_type" required>
+            <div id="bloodTypeError" class="error-message"></div> <!-- Error message for blood type -->
+        </div>
+
+        <div class="mb-2">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" id="location" class="form-control" required style="width: 400px;">
+            <button type="button" class="btn btn-secondary mt-2" onclick="getLocation()">Get Location</button>
+            <span id="locationMessage" class="text-muted mt-2"></span>
+            <div id="locationError" class="error-message"></div> <!-- Error message for location -->
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="validateAndSubmit()">Submit</button>
+    </form>
+</div>
+
+<script>
+    // Function to select blood type
+    function selectBloodType(bloodType) {
+        const buttons = document.querySelectorAll('#bloodTypeButtons .btn');
+        buttons.forEach(button => {
+            button.classList.remove('active', 'btn-primary');
+            button.classList.add('btn-outline-primary');
+        });
+
+        const selectedButton = Array.from(buttons).find(button => button.textContent === bloodType);
+        if (selectedButton) {
+            selectedButton.classList.add('active', 'btn-primary');
+            selectedButton.classList.remove('btn-outline-primary');
+        }
+
+        document.getElementById('blood_type').value = bloodType;
+        document.getElementById('bloodTypeError').textContent = ''; // Clear error on selection
+        selectedButton.classList.remove('error');
+    }
+
+    // Function to get the user's location
+    function getLocation() {
+        const locationMessage = document.getElementById('locationMessage');
+        locationMessage.textContent = "Getting your location!";
+        document.getElementById('locationError').textContent = ''; // Clear error on location fetch
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    document.getElementById('location').value = `${latitude},${longitude}`;
+                    locationMessage.textContent = "Location fetched successfully.";
+                    document.getElementById('location').classList.remove('error');
+                },
+                function() {
+                    locationMessage.textContent = "Unable to retrieve your location.";
+                }
+            );
+        } else {
+            locationMessage.textContent = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    // Function to validate the form and show custom error messages
+    function validateAndSubmit() {
+        const bloodType = document.getElementById('blood_type').value;
+        const location = document.getElementById('location').value;
+        let isValid = true;
+
+        // Validate blood type
+        if (!bloodType) {
+            document.getElementById('bloodTypeError').textContent = "Please select a blood type.";
+            document.querySelector('#bloodTypeButtons').classList.add('error');
+            isValid = false;
+        } else {
+            document.getElementById('bloodTypeError').textContent = '';
+            document.querySelector('#bloodTypeButtons').classList.remove('error');
+        }
+
+        // Validate location
+        if (!location) {
+            document.getElementById('locationError').textContent = "Please enter or fetch your location.";
+            document.getElementById('location').classList.add('error');
+            isValid = false;
+        } else {
+            document.getElementById('locationError').textContent = '';
+            document.getElementById('location').classList.remove('error');
+        }
+
+        // If valid, submit the details
+        if (isValid) {
+            submitDetails();
+        }
+    }
+
+    // Function to submit the details (as before)
+    function submitDetails() {
+        const bloodType = document.getElementById('blood_type').value;
+        const location = document.getElementById('location').value;
+
+        const payload = {
+            blood_type: bloodType,
+            user_location: location
+        };
+
+        fetch('/blood/find_blood_banks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); // Expecting JSON response
+        })
+        .then(data => {
+            // Store blood type and location in local storage for later use
+            localStorage.setItem('blood_type', bloodType);
+            localStorage.setItem('user_location', location);
+            // Redirect to blood banks page
+            window.location.href = '/blood_banks';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting your details. Please try again.');
+        });
+    }
+</script>
+
+</body>
+</html>

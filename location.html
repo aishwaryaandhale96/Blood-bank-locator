@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Blood Banks</title>
+</head>
+<body>
+    <h1>Find Blood Banks Near You</h1>
+    <button onclick="findBloodBanks()">Find Blood Banks</button>
+    <p id="result"></p>
+
+    <script>
+        function findBloodBanks() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Send the user's location and other parameters to the backend
+                    const payload = {
+                        user_location: `${latitude},${longitude}`,
+                        blood_type: 'A+',  // Replace this with user input for blood type
+                        sort_by: 'distance' // Default sorting
+                    };
+
+                    fetch('/find_blood_banks', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }, function(error) {
+                    console.error('Geolocation error:', error);
+                });
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+            }
+        }
+    </script>
+</body>
+</html>

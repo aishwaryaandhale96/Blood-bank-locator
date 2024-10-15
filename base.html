@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Locator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Gradient styles for the navbar */
+        .navbar {
+            background: linear-gradient(120deg, #ff416c 0%, #ff4b2b 100%); /* Red to pink gradient for the navbar */
+        }
+        .navbar .nav-link, .navbar .navbar-brand {
+            color: white !important; /* Set navbar link and brand text to white */
+        }
+        .navbar .nav-link:hover, .navbar .navbar-brand:hover {
+            color: #f1f1f1 !important; /* Slightly lighter color on hover */
+        }
+
+        /* Gradient background for the entire page */
+        body {
+            background: linear-gradient(120deg, #ff416c 0%, #ff4b2b 100%); /* Red to pink gradient for body */
+            background-size: cover; /* Fill the entire page */
+            background-position: center; /* Center the image */
+            background-attachment: fixed; /* Make the image stay in place */
+        }
+
+        /* Optional: Add some styling to make the content stand out against the background */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: rgba(255, 0, 0, 0.9); /* Semi-transparent red for footer */
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Blood Bank Locator</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Footer -->
+    <footer class="mt-5 text-center text-white">
+        <p>&copy; 2024 Blood Bank Locator | All rights reserved.</p>
+        <p>Contact us: info@bloodbanklocator.com | Phone: +123 456 7890</p>
+    </footer>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

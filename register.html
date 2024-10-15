@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); /* Soft gradient background */
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            margin-top: 60px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 500px;
+        }
+
+        h2 {
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary, .btn-success {
+            background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover, .btn-success:hover {
+            background-image: linear-gradient(120deg, #f5576c 0%, #f093fb 100%);
+        }
+
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Register</h2>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone_num">Phone Number:</label>
+            <input type="text" class="form-control" id="phone_num" required>
+        </div>
+        <div class="form-group">
+            <label for="location_latitude">Latitude:</label>
+            <input type="text" class="form-control" id="location_latitude" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="longitude">Longitude:</label>
+            <input type="text" class="form-control" id="longitude" required readonly>
+        </div>
+        <button type="button" class="btn btn-success mt-3" id="getLocation">Get Location</button>
+        <div class="form-group mt-3">
+            <label for="user_type">User Type:</label>
+            <input type="text" class="form-control" id="user_type" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-4">Register</button>
+    </form>
+</div>
+
+<!-- Modal for Success Message -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Registration Successful</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                You have successfully registered!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('getLocation').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('location_latitude').value = position.coords.latitude;
+                document.getElementById('longitude').value = position.coords.longitude;
+            }, function(error) {
+                alert('Error occurred while retrieving location: ' + error.message);
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    });
+
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent the form from submitting normally
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone_num: document.getElementById('phone_num').value,
+            LocationLatitude: document.getElementById('location_latitude').value,
+            Longitude: document.getElementById('longitude').value,
+            User_Type: document.getElementById('user_type').value,
+            password: document.getElementById('password').value
+        };
+
+        fetch('/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'  // Set the content type to application/json
+            },
+            body: JSON.stringify(data)  // Convert the JavaScript object to a JSON string
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Trigger the success modal
+            $('#successModal').modal('show');
+            // Redirect to homepage after a short delay
+            setTimeout(function() {
+                window.location.href = '/'; // Change this to your homepage URL if different
+            }, 2000); // Redirect after 2 seconds
+        })
+        .catch((error) => {
+            alert('Registration failed: ' + error.message);
+        });
+    });
+</script>
+
+</body>
+</html>
